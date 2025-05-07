@@ -29,8 +29,17 @@ interface ApiService {
         @Part file: MultipartBody.Part? // Esto es para el archivo
     ): Course
 
+    @Multipart
     @PUT("api/course/{id}")
-    suspend fun updateCourse(@Path("id") id: Int?, @Body courseDto: Course): Course
+    suspend fun updateCourse(
+        @Path("id") id: Int,
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("schedule") schedule: RequestBody,
+        @Part("professor") professor: RequestBody,
+        @Part file: MultipartBody.Part? // Agregar el archivo como Multipart
+    ): Course
+
 
     @DELETE("api/course/{id}")
     suspend fun deleteCourse(@Path("id") id: Int?): Response<Unit>

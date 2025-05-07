@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
+    id ("kotlin-kapt")
 }
 
 android {
@@ -75,6 +76,17 @@ dependencies {
         implementation ("androidx.compose.material3:material3:1.2.0")
         // demás dependencias...
 
+    val room_version = "2.7.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    // StateFlow
+
+
+
+    // Para trabajar con LiveData y StateFlow en ViewModel
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
 
 
 // Firebase Bill of Materials (BOM) para manejar todas las versiones de Firebase
