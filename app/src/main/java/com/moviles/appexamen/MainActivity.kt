@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         topBar = {
                             TopAppBar(
-                                title = { Text("Course Manager", color = Color.White) },
+                                title = { Text("Gestión de cursos", color = Color.White) },
                                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF6200EE))
                             )
                         },
@@ -154,7 +154,7 @@ fun CourseForm(
         TextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = { Text("Nombre") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -169,7 +169,7 @@ fun CourseForm(
         TextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text("Description") },
+            label = { Text("Descripción") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -184,7 +184,7 @@ fun CourseForm(
         TextField(
             value = schedule,
             onValueChange = { schedule = it },
-            label = { Text("Schedule") },
+            label = { Text("Horario") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -199,7 +199,7 @@ fun CourseForm(
         TextField(
             value = professor,
             onValueChange = { professor = it },
-            label = { Text("Professor") },
+            label = { Text("Profesor") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -220,7 +220,7 @@ fun CourseForm(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Select Image", color = Color.White)
+            Text("Seleccionar imagen", color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -260,13 +260,13 @@ fun CourseForm(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
             ) {
-                Text("Save", color = Color.White)
+                Text("Guardar", color = Color.White)
             }
             Button(
                 onClick = onCancel,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC6))
             ) {
-                Text("Cancel", color = Color.Black)
+                Text("Cancelar", color = Color.Black)
             }
         }
     }
@@ -295,8 +295,8 @@ fun CourseItem(
 
             Text(text = course.name ?: "", color = Color(0xFF000000), style = MaterialTheme.typography.titleMedium)
             Text(text = course.description ?: "", color = Color(0xFF666666))
-            Text(text = "Schedule: ${course.schedule}", color = Color(0xFF666666))
-            Text(text = "Professor: ${course.professor}", color = Color(0xFF666666))
+            Text(text = "Horario: ${course.schedule}", color = Color(0xFF666666))
+            Text(text = "Profesor: ${course.professor}", color = Color(0xFF666666))
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -308,13 +308,13 @@ fun CourseItem(
                     onClick = onEdit,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC6))
                 ) {
-                    Text("Edit", color = Color.Black)
+                    Text("Editar", color = Color.Black)
                 }
                 Button(
                     onClick = onDelete,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC6))
                 ) {
-                    Text("Delete", color = Color.Black)
+                    Text("Eliminar", color = Color.Black)
                 }
             }
         }
