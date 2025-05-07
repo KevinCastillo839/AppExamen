@@ -32,10 +32,18 @@ import java.io.File
 import androidx.compose.material3.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import com.moviles.appexamen.viewmodel.CourseViewModelFactory
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.StateFlow
+
 
 import java.io.FileOutputStream
 import java.io.IOException
-
 
 class MainActivity : ComponentActivity() {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -49,11 +57,49 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFF5F5F5) // Gris claro
                 ) {
-                    val courseViewModel: CourseViewModel = viewModel()
+                    val context = LocalContext.current
+
+                    // ViewModel
+                    val courseViewModel: CourseViewModel = viewModel(
+                        factory = CourseViewModelFactory(context)
+                    )
+
+
+                    // Estados
                     val courses by courseViewModel.courses.collectAsState()
+                    val loadingState by courseViewModel.loadingState.collectAsState()
+
                     var showForm by remember { mutableStateOf(false) }
                     var selectedCourse by remember { mutableStateOf<Course?>(null) }
 
+                    // Snackbar host state
+                    val snackbarHostState = remember { SnackbarHostState() }
+                    val coroutineScope = rememberCoroutineScope()
+
+                    // Map de estados a mensajes
+                    val loadingMessages = mapOf(
+                        "Cargando cursos desde la API..." to "Sincronizando datos desde la API...",
+                        "Cursos cargados desde la API" to "Datos cargados desde la API.",
+                        "No hay conexión a Internet. Cargando desde la caché..." to "Sin conexión, mostrando datos locales.",
+                        "Error al cargar los cursos" to "Error al cargar los cursos. Reintentando..."
+                    )
+
+
+
+                    // Mostrar Snackbar cuando cambie loadingState
+                    LaunchedEffect(loadingState) {
+                        if (loadingState.isNotEmpty() && loadingState != "Verificando conexión...") {
+                            coroutineScope.launch {
+                                val message = loadingMessages[loadingState] ?: "Estado desconocido."
+                                snackbarHostState.showSnackbar(
+                                    message = message,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    }
+
+                    // Cargar cursos
                     LaunchedEffect(Unit) {
                         courseViewModel.fetchCourses()
                     }
@@ -76,6 +122,7 @@ class MainActivity : ComponentActivity() {
                                 Text("+", color = Color.White)
                             }
                         },
+                        snackbarHost = { SnackbarHost(snackbarHostState) }, // Aquí se conecta el SnackbarHost
                         containerColor = Color(0xFFF5F5F5)
                     ) { paddingValues ->
                         if (showForm) {
@@ -84,20 +131,26 @@ class MainActivity : ComponentActivity() {
                                     .padding(paddingValues)
                                     .padding(16.dp)
                             ) {
-                            CourseForm(
-                                course = selectedCourse,
-                                onSave = { course, file ->
-                                    if (course.id == null) {
-                                        courseViewModel.addCourse(course, file)
-                                    } else {
-                                        courseViewModel.updateCourse(course)
+                                CourseForm(
+                                    course = selectedCourse,
+                                    onSave = { course, file ->
+                                        // Si el curso tiene un id (es un curso existente), entonces actualizarlo
+                                        if (course.id != null) {
+                                            // En este caso, seleccionamos el curso y pasamos su id
+                                            courseViewModel.updateCourse(course, file) // Pasa el curso y el archivo
+                                        } else {
+                                            // Si no tiene id (es un curso nuevo), entonces agregarlo
+                                            courseViewModel.addCourse(course, file)
+                                        }
+                                        showForm = false
+                                    },
+                                    onCancel = {
+                                        showForm = false
                                     }
-                                    showForm = false
-                                },
-                                onCancel = {
-                                    showForm = false
-                                }
-                            )}
+                                )
+
+
+                            }
                         } else {
                             LazyColumn(
                                 modifier = Modifier
