@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(Unit) {
                         courseViewModel.fetchCourses()
                     }
-
+fghjkl
                     Scaffold(
                         topBar = {
                             TopAppBar(
