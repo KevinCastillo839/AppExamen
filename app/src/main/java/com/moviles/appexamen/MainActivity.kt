@@ -32,10 +32,18 @@ import java.io.File
 import androidx.compose.material3.TextField
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import com.moviles.appexamen.viewmodel.CourseViewModelFactory
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.StateFlow
+
 
 import java.io.FileOutputStream
 import java.io.IOException
-
 
 class MainActivity : ComponentActivity() {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -49,11 +57,49 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFF5F5F5) // Gris claro
                 ) {
-                    val courseViewModel: CourseViewModel = viewModel()
+                    val context = LocalContext.current
+
+                    // ViewModel
+                    val courseViewModel: CourseViewModel = viewModel(
+                        factory = CourseViewModelFactory(context)
+                    )
+
+
+                    // Estados
                     val courses by courseViewModel.courses.collectAsState()
+                    val loadingState by courseViewModel.loadingState.collectAsState()
+
                     var showForm by remember { mutableStateOf(false) }
                     var selectedCourse by remember { mutableStateOf<Course?>(null) }
 
+                    // Snackbar host state
+                    val snackbarHostState = remember { SnackbarHostState() }
+                    val coroutineScope = rememberCoroutineScope()
+
+                    // Map de estados a mensajes
+                    val loadingMessages = mapOf(
+                        "Cargando cursos desde la API..." to "Sincronizando datos desde la API...",
+                        "Cursos cargados desde la API" to "Datos cargados desde la API.",
+                        "No hay conexión a Internet. Cargando desde la caché..." to "Sin conexión, mostrando datos locales.",
+                        "Error al cargar los cursos" to "Error al cargar los cursos. Reintentando..."
+                    )
+
+
+
+                    // Mostrar Snackbar cuando cambie loadingState
+                    LaunchedEffect(loadingState) {
+                        if (loadingState.isNotEmpty() && loadingState != "Verificando conexión...") {
+                            coroutineScope.launch {
+                                val message = loadingMessages[loadingState] ?: "Estado desconocido."
+                                snackbarHostState.showSnackbar(
+                                    message = message,
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    }
+
+                    // Cargar cursos
                     LaunchedEffect(Unit) {
                         courseViewModel.fetchCourses()
                     }
@@ -61,7 +107,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(
                         topBar = {
                             TopAppBar(
-                                title = { Text("Course Manager", color = Color.White) },
+                                title = { Text("Gestión de cursos", color = Color.White) },
                                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF6200EE))
                             )
                         },
@@ -76,6 +122,7 @@ class MainActivity : ComponentActivity() {
                                 Text("+", color = Color.White)
                             }
                         },
+                        snackbarHost = { SnackbarHost(snackbarHostState) }, // Aquí se conecta el SnackbarHost
                         containerColor = Color(0xFFF5F5F5)
                     ) { paddingValues ->
                         if (showForm) {
@@ -84,20 +131,26 @@ class MainActivity : ComponentActivity() {
                                     .padding(paddingValues)
                                     .padding(16.dp)
                             ) {
-                            CourseForm(
-                                course = selectedCourse,
-                                onSave = { course, file ->
-                                    if (course.id == null) {
-                                        courseViewModel.addCourse(course, file)
-                                    } else {
-                                        courseViewModel.updateCourse(course)
+                                CourseForm(
+                                    course = selectedCourse,
+                                    onSave = { course, file ->
+                                        // Si el curso tiene un id (es un curso existente), entonces actualizarlo
+                                        if (course.id != null) {
+                                            // En este caso, seleccionamos el curso y pasamos su id
+                                            courseViewModel.updateCourse(course, file) // Pasa el curso y el archivo
+                                        } else {
+                                            // Si no tiene id (es un curso nuevo), entonces agregarlo
+                                            courseViewModel.addCourse(course, file)
+                                        }
+                                        showForm = false
+                                    },
+                                    onCancel = {
+                                        showForm = false
                                     }
-                                    showForm = false
-                                },
-                                onCancel = {
-                                    showForm = false
-                                }
-                            )}
+                                )
+
+
+                            }
                         } else {
                             LazyColumn(
                                 modifier = Modifier
@@ -154,7 +207,7 @@ fun CourseForm(
         TextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = { Text("Nombre") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -169,7 +222,7 @@ fun CourseForm(
         TextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text("Description") },
+            label = { Text("Descripción") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -184,7 +237,7 @@ fun CourseForm(
         TextField(
             value = schedule,
             onValueChange = { schedule = it },
-            label = { Text("Schedule") },
+            label = { Text("Horario") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -199,7 +252,7 @@ fun CourseForm(
         TextField(
             value = professor,
             onValueChange = { professor = it },
-            label = { Text("Professor") },
+            label = { Text("Profesor") },
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
@@ -220,7 +273,7 @@ fun CourseForm(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Select Image", color = Color.White)
+            Text("Seleccionar imagen", color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -260,13 +313,13 @@ fun CourseForm(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
             ) {
-                Text("Save", color = Color.White)
+                Text("Guardar", color = Color.White)
             }
             Button(
                 onClick = onCancel,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC6))
             ) {
-                Text("Cancel", color = Color.Black)
+                Text("Cancelar", color = Color.Black)
             }
         }
     }
@@ -295,8 +348,8 @@ fun CourseItem(
 
             Text(text = course.name ?: "", color = Color(0xFF000000), style = MaterialTheme.typography.titleMedium)
             Text(text = course.description ?: "", color = Color(0xFF666666))
-            Text(text = "Schedule: ${course.schedule}", color = Color(0xFF666666))
-            Text(text = "Professor: ${course.professor}", color = Color(0xFF666666))
+            Text(text = "Horario: ${course.schedule}", color = Color(0xFF666666))
+            Text(text = "Profesor: ${course.professor}", color = Color(0xFF666666))
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -308,13 +361,13 @@ fun CourseItem(
                     onClick = onEdit,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC6))
                 ) {
-                    Text("Edit", color = Color.Black)
+                    Text("Editar", color = Color.Black)
                 }
                 Button(
                     onClick = onDelete,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC6))
                 ) {
-                    Text("Delete", color = Color.Black)
+                    Text("Eliminar", color = Color.Black)
                 }
             }
         }
