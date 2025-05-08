@@ -27,12 +27,12 @@ Esta es una aplicación móvil desarrollada en Android con Jetpack Compose para 
 
 2. **Configuración previa**:
    - Asegúrate de que el API está corriendo localmente o accesible públicamente.
-   - Si usas localhost, recuerda configurar el endpoint usando la IP 10.0.2.2 para emuladores Android.
+   
 
 3. **Compilar y ejecutar**:
    - Abrir el proyecto en Android Studio.
    - Sincronizar dependencias.
-   - Ejecutar la app en un emulador o dispositivo físico.
+   - Ejecutar la app en un emulador.
 
 ## Características
 - CRUD de Cursos (Crear, Leer, Actualizar, Eliminar)
@@ -44,4 +44,4 @@ Esta es una aplicación móvil desarrollada en Android con Jetpack Compose para 
 
 
 ## Rama Principal
-- `main`
+- `master`
