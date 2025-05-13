@@ -1,21 +1,27 @@
 package com.moviles.appexamen.data
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.moviles.appexamen.models.CourseEntity
+
+import androidx.room.*
 import com.moviles.appexamen.models.StudentEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StudentDao {
 
-    @Query("SELECT * FROM students")
-    suspend fun getAllStudents(): List<StudentEntity>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStudent(events: List<StudentEntity>)
+    suspend fun addStudent(students: List<StudentEntity>)
 
-    @Query("DELETE FROM students")
-    suspend fun deleteAllStudents()
-}
+    @Update
+    suspend fun update(student: StudentEntity)
+
+    @Delete
+    suspend fun delete(student: StudentEntity)
+
+    @Query("SELECT * FROM STUDENTS WHERE courseId = :courseId")
+    suspend fun getStudentsByCourse(courseId: Int): List<StudentEntity>
+
+    @Query("DELETE FROM STUDENTS")
+    suspend fun deleteStudent()
+
+    @Query("SELECT * FROM STUDENTS WHERE id = :id")
+    suspend fun getStudentById(id: Int): StudentEntity
 }

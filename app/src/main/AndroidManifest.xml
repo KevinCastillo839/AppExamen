@@ -20,6 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppExamen"
         tools:targetApi="31">
+
+        <activity android:name=".StudentsActivity" />
+
+        <activity android:name=".StudentDetailActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,7 +32,6 @@
             android:theme="@style/Theme.AppExamen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

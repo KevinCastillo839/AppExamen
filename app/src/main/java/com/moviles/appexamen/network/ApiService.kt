@@ -1,11 +1,14 @@
 package com.moviles.appexamen.network
 
 import com.moviles.appexamen.models.Course
+import com.moviles.appexamen.models.Student
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -43,4 +46,31 @@ interface ApiService {
 
     @DELETE("api/course/{id}")
     suspend fun deleteCourse(@Path("id") id: Int?): Response<Unit>
+
+    //Para estudiantes//
+    @GET("api/course/{courseId}/students")
+    suspend fun getStudentsByCourse(@Path("courseId") courseId: Int): List<Student>
+
+    @FormUrlEncoded
+    @POST("api/student")
+    suspend fun addStudent(
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("phone") phone: String,
+        @Field("courseId") courseId: Int
+    ): Response<Student>
+
+    @PUT("api/student/{id}")
+    suspend fun updateStudent(
+        @Path("id") id: Int?,
+        @Body student: Student
+    ): Student
+
+    @DELETE("api/student/{id}")
+    suspend fun deleteStudent(@Path("id") id: Int?): Response<Unit>
+
+    @POST("students")
+    suspend fun createStudent(@Body student: Student): Student
+
+
 }

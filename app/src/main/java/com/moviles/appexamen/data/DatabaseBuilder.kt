@@ -15,7 +15,9 @@ object DatabaseBuilder {
                     context.applicationContext,
                     CourseDatabase::class.java,
                     "course_database"
-                ).fallbackToDestructiveMigration().build()
+                )
+                    .fallbackToDestructiveMigration() // Si hay un cambio en la base de datos, la destruye y la recrea
+                    .build()
             }
         }
         return INSTANCE!!
