@@ -16,12 +16,12 @@ interface StudentDao {
     @Delete
     suspend fun delete(student: StudentEntity)
 
-    @Query("SELECT * FROM STUDENTS WHERE courseId = :courseId")
+    @Query("SELECT * FROM students WHERE courseId = :courseId")
     suspend fun getStudentsByCourse(courseId: Int): List<StudentEntity>
 
-    @Query("DELETE FROM STUDENTS")
+    @Query("DELETE FROM students")
     suspend fun deleteStudent()
 
-    @Query("SELECT * FROM STUDENTS WHERE id = :id")
+    @Query("SELECT * FROM students WHERE id = :id")
     suspend fun getStudentById(id: Int): StudentEntity
 }

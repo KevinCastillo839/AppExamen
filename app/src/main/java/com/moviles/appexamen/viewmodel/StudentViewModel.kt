@@ -1,8 +1,9 @@
-/*package com.moviles.appexamen.viewmodel
+package com.moviles.appexamen.viewmodel
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresExtension
@@ -50,11 +51,11 @@ class StudentViewModel(private val context: Context) : ViewModel() {
     }
 
     // Guardar estudiantes en la base de datos local
-    fun saveStudents(studentsList: List<Student>) {
-        viewModelScope.launch {
-            repository.insertStudents(studentsList)
-        }
-    }
+//    fun saveStudents(studentsList: List<Student>) {
+//        viewModelScope.launch {
+//            repository.insertStudents(studentsList)
+//        }
+//    }
 
     // Sincronizar estudiantes desde la API y la base de datos local
     fun fetchStudents(courseId: Int) {
@@ -68,7 +69,9 @@ class StudentViewModel(private val context: Context) : ViewModel() {
                     _loadingState.value = "Cargando estudiantes desde la API..."
                     val apiStudents = RetrofitInstance.api.getStudentsByCourse(courseId)
                     repository.clearStudents()
-                    repository.insertStudents(apiStudents)
+
+                    repository.insertStudents(apiStudents, courseId)
+
                     Log.i("StudentViewModel", "Datos de estudiantes sincronizados con API")
                     _loadingState.value = "Estudiantes cargados desde la API"
                 } else {
@@ -102,39 +105,37 @@ class StudentViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    // Agregar un estudiante con imagen (si es necesario)
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun addStudent(student: Student, file: File?) {
+//    fun addStudent(student: Student) {
+//        viewModelScope.launch {
+//            try {
+//                val response = RetrofitInstance.api.addStudent(student)
+//                if (response.isSuccessful) {
+//                    response.body()?.let { createdStudent ->
+//                        _students.value += createdStudent
+//                        Log.i("ViewModelInfo", "Estudiante agregado: $createdStudent")
+//                    }
+//                } else {
+//                    Log.e("ViewModelError", "Error al agregar estudiante: ${response.errorBody()?.string()}")
+//                }
+//            } catch (e: Exception) {
+//                Log.e("ViewModelError", "Error inesperado al agregar estudiante", e)
+//            }
+//        }
+//    }
+    fun updateStudent(student: Student) {
         viewModelScope.launch {
-            try {
-                // Preparamos las partes para la petición multipart
-                val namePart = student.name.toRequestBody("text/plain".toMediaTypeOrNull())
-                val emailPart = student.email.toRequestBody("text/plain".toMediaTypeOrNull())
-                val phonePart = student.phone.toRequestBody("text/plain".toMediaTypeOrNull())
-                val courseIdPart = student.courseId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
-                val filePart = file?.let {
-                    val requestFile = it.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                    MultipartBody.Part.createFormData("file", it.name, requestFile)
+                val updatedStudent = RetrofitInstance.api.updateStudent(student.id, student)
+                _students.value = _students.value.map {
+                    if (it.id == updatedStudent.id) updatedStudent else it
                 }
+                Log.i("ViewModelInfo", "Estudiante actualizado: $updatedStudent")
 
-                // Hacemos la llamada al servicio API
-                val response = RetrofitInstance.api.addStudent(
-                    name = namePart,
-                    email = emailPart,
-                    phone = phonePart,
-                    courseId = courseIdPart,
-                    file = filePart
-                )
 
-                // Si la respuesta es exitosa, actualizamos la lista de estudiantes
-                _students.value = _students.value.orEmpty() + response
-                Log.i("StudentViewModel", "Response: $response")
-            } catch (e: Exception) {
-                Log.e("StudentViewModelError", "Error: ${e.message}", e)
-            }
         }
     }
+
+
 
     // Eliminar un estudiante
     fun deleteStudent(studentId: Int?) {
@@ -151,4 +152,3 @@ class StudentViewModel(private val context: Context) : ViewModel() {
         } ?: Log.e("StudentViewModelError", "Error: studentId is null")
     }
 }
-*/

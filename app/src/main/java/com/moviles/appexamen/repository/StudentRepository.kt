@@ -7,7 +7,7 @@ import com.moviles.appexamen.data.StudentDao
 import com.moviles.appexamen.models.StudentEntity
 import com.moviles.appexamen.network.ApiService
 
-class StudentRepository(private val context: Context, private val apiService: ApiService) {
+class StudentRepository(private val context: Context) {
 
     private val studentDao = DatabaseBuilder.getInstance(context).studentDao()
 
@@ -19,11 +19,12 @@ class StudentRepository(private val context: Context, private val apiService: Ap
     }
 
     // Insertar nuevos estudiantes en la base de datos local
-    suspend fun insertStudents(students: List<Student>) {
+    suspend fun insertStudents(students: List<Student>, courseId: Int) {
         studentDao.addStudent(students.map { student ->
-            student.toEntity()
+            student.copy(courseId = courseId).toEntity()
         })
     }
+
 
     // Limpiar todos los estudiantes de la base de datos local
     suspend fun clearStudents() {
@@ -31,10 +32,7 @@ class StudentRepository(private val context: Context, private val apiService: Ap
     }
 
     // Sincronizar los estudiantes entre la base de datos local y la API
-    suspend fun syncStudents(courseId: Int) {
-        val studentsFromApi = apiService.getStudentsByCourse(courseId)
-        insertStudents(studentsFromApi)
-    }
+
 
     // Convertir la entidad de la base de datos (StudentEntity) al modelo de dominio (Student)
     private fun StudentEntity.toDomain(): Student {
@@ -53,8 +51,9 @@ class StudentRepository(private val context: Context, private val apiService: Ap
             id = this.id ?: 0, // Asignamos un valor predeterminado si `id` es nulo
             name = this.name,
             email = this.email,
-            phone = this.phone,
+            phone = this.phone ?: "", // Asignar un valor vacío si `phone` es nulo
             courseId = this.courseId
         )
     }
+
 }

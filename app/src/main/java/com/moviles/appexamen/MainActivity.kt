@@ -1,6 +1,7 @@
 package com.moviles.appexamen
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -166,9 +167,18 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onDelete = {
                                             courseViewModel.deleteCourse(course.id)
+                                        },
+                                        onViewStudents = {
+                                            course.id?.let { id ->
+                                                val intent = Intent(context, StudentActivity::class.java).apply {
+                                                    putExtra("COURSE_ID", id) // Pasa el ID del curso a la nueva actividad
+                                                }
+                                                context.startActivity(intent) // Inicia la nueva actividad
+                                            }
                                         }
                                     )
                                 }
+
                             }
                         }
                     }
@@ -330,7 +340,8 @@ fun CourseForm(
 fun CourseItem(
     course: Course,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onViewStudents: () -> Unit // Nuevo parámetro para manejar la acción de ver estudiantes
 ) {
     Card(
         modifier = Modifier
@@ -369,10 +380,18 @@ fun CourseItem(
                 ) {
                     Text("Eliminar", color = Color.Black)
                 }
+                Button(
+                    onClick = onViewStudents, // Llama a la función que envía el ID del curso
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+                ) {
+                    Text("Ver Estudiantes", color = Color.White)
+                }
             }
         }
     }
 }
+
+
 
 //@Composable
 //fun EventCard(event: Event, modifier: Modifier = Modifier) {
