@@ -51,14 +51,13 @@ interface ApiService {
     @GET("api/course/{courseId}/students")
     suspend fun getStudentsByCourse(@Path("courseId") courseId: Int): List<Student>
 
-    @FormUrlEncoded
-    @POST("api/student")
+    @POST("api/course/{courseId}/students")
     suspend fun addStudent(
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("phone") phone: String,
-        @Field("courseId") courseId: Int
+        @Path("courseId") courseId: Int,
+        @Body student: Student
     ): Response<Student>
+
+
 
     @PUT("api/student/{id}")
     suspend fun updateStudent(

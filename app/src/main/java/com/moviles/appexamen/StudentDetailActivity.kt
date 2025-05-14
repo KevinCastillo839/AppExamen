@@ -1,4 +1,4 @@
-package com.moviles.appexamen
+package com.moviles.appexamen/*
 
 import android.os.Bundle
 import android.widget.Toast
@@ -45,3 +45,4 @@ class StudentDetailActivity : ComponentActivity() {
         }
     }
 }
+*/
