@@ -1,5 +1,6 @@
 package com.moviles.appexamen
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -22,6 +23,7 @@ import com.moviles.appexamen.viewmodel.CourseViewModelFactory
 import com.moviles.appexamen.viewmodel.StudentViewModel
 import com.moviles.appexamen.viewmodel.StudentViewModelFactory
 import kotlinx.coroutines.launch
+
 
 class StudentActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -90,12 +92,12 @@ class StudentActivity : ComponentActivity() {
                                 if (student.id != null) {
                                     studentViewModel.updateStudent(student)
                                 } else {
-                                    //studentViewModel.addStudent(student)
+                                    studentViewModel.addStudent(student)
                                 }
                                 showForm = false
                             },
 
-                                    onCancel = {
+                            onCancel = {
                                 showForm = false
                             },
                             modifier = Modifier.padding(padding).padding(16.dp)
@@ -115,10 +117,16 @@ class StudentActivity : ComponentActivity() {
                                     },
                                     onDelete = {
                                         studentViewModel.deleteStudent(student.id)
+                                    },
+                                    onViewDetails = {
+                                        val intent = Intent(context, StudentDetailActivity::class.java)
+                                        intent.putExtra("STUDENT_ID", student.id)
+                                        context.startActivity(intent)
                                     }
                                 )
                             }
                         }
+
                     }
                 }
             }
@@ -129,7 +137,8 @@ class StudentActivity : ComponentActivity() {
 fun StudentItem(
     student: Student,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onViewDetails: () -> Unit // Nueva función para ver detalles
 ) {
     Card(
         modifier = Modifier
@@ -144,22 +153,33 @@ fun StudentItem(
             Text("Teléfono: ${student.phone}")
 
             Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
-                TextButton(onClick = onEdit) {
-                    Text("Editar")
+                Row {
+                    TextButton(onClick = onEdit) {
+                        Text("Editar")
+                    }
+                    TextButton(
+                        onClick = onDelete,
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Text("Eliminar")
+                    }
                 }
-                TextButton(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                Button(
+                    onClick = onViewDetails,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
                 ) {
-                    Text("Eliminar")
+                    Text("Ver Detalles", color = Color.White)
                 }
             }
         }
     }
 }
+
 @Composable
 fun StudentForm(
     student: Student?,

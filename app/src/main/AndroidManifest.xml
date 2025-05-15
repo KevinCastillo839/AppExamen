@@ -34,7 +34,7 @@
 
         <activity android:name=".StudentActivity" />
 
-        <!--<activity android:name=".StudentDetailActivity" />-->
+        <activity android:name=".StudentDetailActivity" />
 
     </application>
 

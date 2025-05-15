@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.moviles.appexamen.models.Student
 import com.moviles.appexamen.network.RetrofitInstance
 import com.moviles.appexamen.repository.StudentRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -155,9 +156,10 @@ fun updateStudent(student: Student) {
         }
     }
 }
-
-
-
+//FUNCION PARA DETALLES
+/*fun getStudentById(id: Int): Flow<Student?> {
+    return repository.getStudentById(id)
+}*/
 
 
 

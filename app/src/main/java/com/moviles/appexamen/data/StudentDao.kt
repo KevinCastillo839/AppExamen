@@ -1,6 +1,7 @@
 package com.moviles.appexamen.data
 
 import androidx.room.*
+import com.moviles.appexamen.models.Student
 import com.moviles.appexamen.models.StudentEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -24,4 +25,7 @@ interface StudentDao {
 
     @Query("SELECT * FROM students WHERE id = :id")
     suspend fun getStudentById(id: Int): StudentEntity
+
+
+
 }

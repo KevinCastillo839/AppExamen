@@ -6,6 +6,7 @@ import com.moviles.appexamen.models.Student
 import com.moviles.appexamen.data.StudentDao
 import com.moviles.appexamen.models.StudentEntity
 import com.moviles.appexamen.network.ApiService
+import kotlinx.coroutines.flow.Flow
 
 class StudentRepository(private val context: Context) {
 
@@ -55,5 +56,9 @@ class StudentRepository(private val context: Context) {
             courseId = this.courseId?: 0,
         )
     }
+    //Metodo para detalles
+    /*suspend fun getStudentById(id: Int): Student {
+        val entity = studentDao.getStudentById(id)
+        return entity.toStudent() */
+    }
 
-}
