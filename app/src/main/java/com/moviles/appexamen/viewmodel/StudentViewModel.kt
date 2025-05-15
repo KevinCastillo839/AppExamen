@@ -156,10 +156,18 @@ fun updateStudent(student: Student) {
         }
     }
 }
-//FUNCION PARA DETALLES
-/*fun getStudentById(id: Int): Flow<Student?> {
-    return repository.getStudentById(id)
-}*/
+    //FUNCION PARA DETALLES
+   /* fun getStudentById(id: Int): Flow<Student?> {
+        return repository.getStudentById(id)
+    }*/
+
+    fun getStudentById(id: Int) {
+        viewModelScope.launch {
+            val student = repository.getStudentById(id)
+
+        }
+    }
+
 
 
 

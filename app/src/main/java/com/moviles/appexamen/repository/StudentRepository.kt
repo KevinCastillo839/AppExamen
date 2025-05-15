@@ -56,9 +56,19 @@ class StudentRepository(private val context: Context) {
             courseId = this.courseId?: 0,
         )
     }
-    //Metodo para detalles
-    /*suspend fun getStudentById(id: Int): Student {
+    //METODO PARA DETALLES
+    suspend fun getStudentById(id: Int): Student? {
         val entity = studentDao.getStudentById(id)
-        return entity.toStudent() */
+        return entity?.let {
+            Student(
+                id = it.id,
+                name = it.name,
+                email = it.email,
+                phone = it.phone,
+                courseId = it.courseId
+            )
+        }
     }
+
+}
 
