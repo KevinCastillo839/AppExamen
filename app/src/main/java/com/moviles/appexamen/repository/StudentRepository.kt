@@ -52,7 +52,7 @@ class StudentRepository(private val context: Context) {
             name = this.name,
             email = this.email,
             phone = this.phone ?: "", // Asignar un valor vacío si `phone` es nulo
-            courseId = this.courseId
+            courseId = this.courseId?: 0,
         )
     }
 
