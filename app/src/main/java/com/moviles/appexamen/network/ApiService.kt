@@ -55,15 +55,16 @@ interface ApiService {
     suspend fun addStudent(
         @Path("courseId") courseId: Int,
         @Body student: Student
-    ): Response<Student>
+    ):  Response<Student>
 
 
 
-    @PUT("api/student/{id}")
+   /* @PUT("course/{courseId}/students/{id}")
     suspend fun updateStudent(
-        @Path("id") id: Int?,
+        @Path("courseId") courseId: Int,
+        @Path("id") id: Int,
         @Body student: Student
-    ): Student
+    ):Student*/
 
     @DELETE("api/student/{id}")
     suspend fun deleteStudent(@Path("id") id: Int?): Response<Unit>
@@ -71,5 +72,10 @@ interface ApiService {
     @POST("students")
     suspend fun createStudent(@Body student: Student): Student
 
-
+    @PUT("api/course/{courseId}/students/{id}")
+    suspend fun updateStudent(
+        @Path("courseId") courseId: Int,
+        @Path("id") id: Int,
+        @Body student: Student
+    ): Response<Student>
 }

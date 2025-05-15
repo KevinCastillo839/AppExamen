@@ -105,35 +105,59 @@ class StudentViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-//    fun addStudent(student: Student) {
-//        viewModelScope.launch {
-//            try {
-//                val response = RetrofitInstance.api.addStudent(student)
-//                if (response.isSuccessful) {
-//                    response.body()?.let { createdStudent ->
-//                        _students.value += createdStudent
-//                        Log.i("ViewModelInfo", "Estudiante agregado: $createdStudent")
-//                    }
-//                } else {
-//                    Log.e("ViewModelError", "Error al agregar estudiante: ${response.errorBody()?.string()}")
-//                }
-//            } catch (e: Exception) {
-//                Log.e("ViewModelError", "Error inesperado al agregar estudiante", e)
-//            }
-//        }
-//    }
-    fun updateStudent(student: Student) {
-        viewModelScope.launch {
-
-                val updatedStudent = RetrofitInstance.api.updateStudent(student.id, student)
-                _students.value = _students.value.map {
-                    if (it.id == updatedStudent.id) updatedStudent else it
+//    PRUEBA PARA SABER SI FUNCIONA EL AGREGAR
+fun addStudent(student: Student) {
+    viewModelScope.launch {
+        try {
+            val response = RetrofitInstance.api.addStudent(student.courseId!!, student)
+            if (response.isSuccessful) {
+                val createdStudent = response.body()
+                if (createdStudent != null) {
+                    _students.value += createdStudent
+                    Log.i("ViewModelInfo", "Estudiante agregado: $createdStudent")
+                } else {
+                    Log.e("ViewModelError", "Respuesta vacía al agregar estudiante")
                 }
-                Log.i("ViewModelInfo", "Estudiante actualizado: $updatedStudent")
-
-
+            } else {
+                Log.e("ViewModelError", "Error al agregar estudiante: ${response.errorBody()?.string()}")
+            }
+        } catch (e: Exception) {
+            Log.e("ViewModelError", "Error inesperado al agregar estudiante", e)
         }
     }
+}
+
+//PRUEBA PARA SABER SI EDITA CORRECTAMENTE
+fun updateStudent(student: Student) {
+    viewModelScope.launch {
+        try {
+            val response = RetrofitInstance.api.updateStudent(
+                courseId = student.courseId!!,
+                id = student.id!!,
+                student = student
+            )
+
+            if (response.isSuccessful) {
+                val updatedStudent = response.body()
+                if (updatedStudent != null) {
+                    _students.value = _students.value.map {
+                        if (it.id == updatedStudent.id) updatedStudent else it
+                    }
+                    Log.i("ViewModelInfo", "Estudiante actualizado: $updatedStudent")
+                } else {
+                    Log.e("ViewModelError", "Respuesta vacía al actualizar estudiante")
+                }
+            } else {
+                Log.e("ViewModelError", "Error al actualizar estudiante: ${response.errorBody()?.string()}")
+            }
+        } catch (e: Exception) {
+            Log.e("ViewModelError", "Error inesperado al actualizar estudiante", e)
+        }
+    }
+}
+
+
+
 
 
 
