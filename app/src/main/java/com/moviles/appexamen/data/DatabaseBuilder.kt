@@ -16,7 +16,8 @@ object DatabaseBuilder {
                     CourseDatabase::class.java,
                     "course_database"
                 )
-                    .fallbackToDestructiveMigration() // Si hay un cambio en la base de datos, la destruye y la recrea
+                    .fallbackToDestructiveMigration() // If there is a change in the database, it destroys it and recreates it.
+
                     .build()
             }
         }

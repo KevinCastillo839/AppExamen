@@ -44,21 +44,15 @@ class StudentViewModel(private val context: Context) : ViewModel() {
 
     private val repository = StudentRepository(context)
 
-    // Cargar estudiantes desde la base de datos local
+    // Load students from the local database
     fun loadStudents(courseId: Int) {
         viewModelScope.launch {
             _students.value = repository.getStudentsByCourse(courseId)
         }
     }
 
-    // Guardar estudiantes en la base de datos local
-//    fun saveStudents(studentsList: List<Student>) {
-//        viewModelScope.launch {
-//            repository.insertStudents(studentsList)
-//        }
-//    }
 
-    // Sincronizar estudiantes desde la API y la base de datos local
+    //Synchronize students from the API and the local database
     fun fetchStudents(courseId: Int) {
         viewModelScope.launch {
             _loadingState.value = "Verificando conexión..."
@@ -93,7 +87,7 @@ class StudentViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    // Verificar si hay conexión a Internet
+    //Check if there is an Internet connection
     private fun hasInternetConnection(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
@@ -106,7 +100,7 @@ class StudentViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-//    PRUEBA PARA SABER SI FUNCIONA EL AGREGAR
+//    Method to add
 fun addStudent(student: Student) {
     viewModelScope.launch {
         try {
@@ -128,7 +122,7 @@ fun addStudent(student: Student) {
     }
 }
 
-//PRUEBA PARA SABER SI EDITA CORRECTAMENTE
+// Method to edit
 fun updateStudent(student: Student) {
     viewModelScope.launch {
         try {
@@ -156,17 +150,7 @@ fun updateStudent(student: Student) {
         }
     }
 }
-    //FUNCION PARA DETALLES
-   /* fun getStudentById(id: Int): Flow<Student?> {
-        return repository.getStudentById(id)
-    }
 
-    fun getStudentById(id: Int) {
-        viewModelScope.launch {
-            val student = repository.getStudentById(id)
-
-        }
-    }*/
 
     private val _student = MutableStateFlow<Student?>(null)
     val student: StateFlow<Student?> = _student
@@ -181,7 +165,7 @@ fun updateStudent(student: Student) {
 
 
 
-    // Eliminar un estudiante
+    // Delete a studen
     fun deleteStudent(studentId: Int?) {
         studentId?.let { id ->
             viewModelScope.launch {

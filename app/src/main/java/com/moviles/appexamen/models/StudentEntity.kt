@@ -13,14 +13,8 @@ data class StudentEntity(
         val courseId: Int
 
 )
-//PRUEBAAAA
-// Convertir entidad a modelo
+
+// Convert entity to model
 fun StudentEntity.toStudent(): Student {
         return Student(id, name, email, phone, courseId)
 }
-/*
-// Convertir modelo a entidad
-fun Student.toEntity(): StudentEntity {
-        return StudentEntity(id, name, email, phone, courseId)
-}
-*/

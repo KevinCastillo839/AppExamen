@@ -12,14 +12,14 @@ class StudentRepository(private val context: Context) {
 
     private val studentDao = DatabaseBuilder.getInstance(context).studentDao()
 
-    // Obtener estudiantes desde la base de datos local
+    // Get students from the local database
     suspend fun getStudentsByCourse(courseId: Int): List<Student> {
         return studentDao.getStudentsByCourse(courseId).map { student ->
             student.toDomain()
         }
     }
 
-    // Insertar nuevos estudiantes en la base de datos local
+    //Insert new students into the local database
     suspend fun insertStudents(students: List<Student>, courseId: Int) {
         studentDao.addStudent(students.map { student ->
             student.copy(courseId = courseId).toEntity()
@@ -27,15 +27,13 @@ class StudentRepository(private val context: Context) {
     }
 
 
-    // Limpiar todos los estudiantes de la base de datos local
+    // Clear all students from the local database
     suspend fun clearStudents() {
         studentDao.deleteStudent()
     }
 
-    // Sincronizar los estudiantes entre la base de datos local y la API
 
-
-    // Convertir la entidad de la base de datos (StudentEntity) al modelo de dominio (Student)
+    // Convert the database entity (StudentEntity) to the domain model (Student)
     private fun StudentEntity.toDomain(): Student {
         return Student(
             id = this.id,
@@ -46,17 +44,17 @@ class StudentRepository(private val context: Context) {
         )
     }
 
-    // Convertir el modelo de dominio (Student) a la entidad de la base de datos (StudentEntity)
+    // Convert the domain model (Student) to the database entity (StudentEntity)
     private fun Student.toEntity(): StudentEntity {
         return StudentEntity(
-            id = this.id ?: 0, // Asignamos un valor predeterminado si `id` es nulo
+            id = this.id ?: 0, // We assign a default value if id is null
             name = this.name,
             email = this.email,
-            phone = this.phone ?: "", // Asignar un valor vacío si `phone` es nulo
+            phone = this.phone ?: "", // Assign an empty value if phone is null
             courseId = this.courseId?: 0,
         )
     }
-    //METODO PARA DETALLES
+    //METHOD FOR DETAILS
     suspend fun getStudentById(id: Int): Student? {
         val entity = studentDao.getStudentById(id)
         return entity?.let {

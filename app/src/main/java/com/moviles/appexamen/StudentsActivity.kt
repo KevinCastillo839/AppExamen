@@ -55,7 +55,7 @@ class StudentActivity : ComponentActivity() {
                 val snackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
 
-                // Snackbar cuando cambia estado
+                // Snackbar when the state changes
                 LaunchedEffect(loadingState) {
                     if (loadingState.isNotEmpty()) {
                         coroutineScope.launch {
@@ -64,7 +64,7 @@ class StudentActivity : ComponentActivity() {
                     }
                 }
 
-                // Cargar estudiantes
+                // Load students
                 LaunchedEffect(Unit) {
                     studentViewModel.fetchStudents(courseId)
                     Log.d("StudentActivity", "Estudiantes cargados: ${students.size}") // Verifica si la lista tiene datos
@@ -145,7 +145,8 @@ fun StudentItem(
     student: Student,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onViewDetails: () -> Unit // Nueva función para ver detalles
+    onViewDetails: () -> Unit // New function to view details
+
 ) {
     Card(
         modifier = Modifier
@@ -238,7 +239,7 @@ fun StudentForm(
                         name = name,
                         email = email,
                         phone = phone,
-                        courseId = student?.courseId ?: 12 // Puedes ajustar esto si usas otro courseId
+                        courseId = student?.courseId ?: 12 // This can be adjusted if another courseId is used.
                     )
                 )
             }) {

@@ -29,7 +29,7 @@ interface ApiService {
 
         @Part("schedule") schedule: RequestBody,
         @Part("professor") date: RequestBody,
-        @Part file: MultipartBody.Part? // Esto es para el archivo
+        @Part file: MultipartBody.Part? // This is for the file
     ): Course
 
     @Multipart
@@ -40,14 +40,14 @@ interface ApiService {
         @Part("description") description: RequestBody,
         @Part("schedule") schedule: RequestBody,
         @Part("professor") professor: RequestBody,
-        @Part file: MultipartBody.Part? // Agregar el archivo como Multipart
+        @Part file: MultipartBody.Part? // Add the file as Multipart
     ): Course
 
 
     @DELETE("api/course/{id}")
     suspend fun deleteCourse(@Path("id") id: Int?): Response<Unit>
 
-    //Para estudiantes//
+    // For students //
     @GET("api/course/{courseId}/students")
     suspend fun getStudentsByCourse(@Path("courseId") courseId: Int): List<Student>
 
@@ -56,15 +56,6 @@ interface ApiService {
         @Path("courseId") courseId: Int,
         @Body student: Student
     ):  Response<Student>
-
-
-
-   /* @PUT("course/{courseId}/students/{id}")
-    suspend fun updateStudent(
-        @Path("courseId") courseId: Int,
-        @Path("id") id: Int,
-        @Body student: Student
-    ):Student*/
 
     @DELETE("api/student/{id}")
     suspend fun deleteStudent(@Path("id") id: Int?): Response<Unit>
@@ -79,7 +70,7 @@ interface ApiService {
         @Body student: Student
     ): Response<Student>
 
-    //PARA VER LOS DETALLES
+    // TO VIEW THE DETAILS
     @GET("api/student/{id}")
     suspend fun getStudentById(@Path("id") id: Int): Student
 
