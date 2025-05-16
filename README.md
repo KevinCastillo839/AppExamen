@@ -32,6 +32,7 @@ Esta es una aplicación móvil desarrollada en Android con Jetpack Compose para 
 3. **Compilar y ejecutar**:
    - Abrir el proyecto en Android Studio.
    - Sincronizar dependencias.
+   - Presionar el boton Sync Project with gradle files
    - Ejecutar la app en un emulador.
 
 ## Características
