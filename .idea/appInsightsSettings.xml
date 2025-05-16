@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.moviles.appexamen" />
+                  <option name="mobileSdkAppId" value="1:475391104882:android:903fef1e57b52950e2afeb" />
+                  <option name="projectId" value="appexam-45424" />
+                  <option name="projectNumber" value="475391104882" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
