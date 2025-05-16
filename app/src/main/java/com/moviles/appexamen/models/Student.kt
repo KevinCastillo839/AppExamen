@@ -11,3 +11,4 @@ data class Student(
     val phone: String,
     val courseId: Int?
 )
+

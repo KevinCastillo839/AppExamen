@@ -25,6 +25,15 @@ interface StudentDao {
 
     @Query("SELECT * FROM students WHERE id = :id")
     suspend fun getStudentById(id: Int): StudentEntity?
+///PRUEBAAAAA//////////////
+    @Dao
+    interface StudentDao {
+        @Query("SELECT * FROM students WHERE id = :id")
+        suspend fun getStudentById(id: Int): StudentEntity?
+
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+        suspend fun insert(student: StudentEntity)
+    }
 
 
 }

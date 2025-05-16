@@ -83,4 +83,10 @@ interface ApiService {
     @GET("api/student/{id}")
     suspend fun getStudentById(@Path("id") id: Int): Student
 
+    interface ApiService {
+        @GET("students/{id}")
+        suspend fun getStudentById(@Path("id") id: Int): Response<Student>
+    }
+
+
 }

@@ -1,9 +1,9 @@
 package com.moviles.appexamen
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,29 +11,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.moviles.appexamen.models.Student
+import com.moviles.appexamen.viewmodel.StudentViewModel
 
 class StudentDetailActivity : ComponentActivity() {
+
+    private val studentViewModel: StudentViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Obtener el ID enviado desde StudentActivity
+        // Obtener el ID del estudiante enviado desde StudentActivity
         val studentId = intent.getIntExtra("STUDENT_ID", -1)
 
         setContent {
-            var student by remember { mutableStateOf<Student?>(null) }
+            // Observamos el estado del estudiante en el ViewModel
+            val student by studentViewModel.student.collectAsState()
 
-            // Simular carga de datos
-            LaunchedEffect(Unit) {
-                // Simular búsqueda en la base de datos (quemado)
-                student = Student(
-                    id = studentId,
-                    name = "Estudiante Ejemplo",
-                    email = "ejemplo@student.com",
-                    phone = "8888-8888",
-                    courseId = 123
-                )
+            // Lanzamos la carga del estudiante cuando la pantalla se crea
+            LaunchedEffect(studentId) {
+                studentViewModel.getStudentById(studentId)
             }
 
             Scaffold(
@@ -44,20 +41,20 @@ class StudentDetailActivity : ComponentActivity() {
                     )
                 }
             ) { paddingValues ->
-                student?.let {
+                if (student != null) {
                     Column(
                         modifier = Modifier
                             .padding(paddingValues)
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text("Nombre: ${it.name}", style = MaterialTheme.typography.titleMedium)
-                        Text("Correo: ${it.email}")
-                        Text("Teléfono: ${it.phone}")
-                        Text("ID del Curso: ${it.courseId}")
-                        Text("ID del Estudiante: ${it.id}")
+                        Text("Nombre: ${student!!.name}", style = MaterialTheme.typography.titleMedium)
+                        Text("Correo: ${student!!.email}")
+                        Text("Teléfono: ${student!!.phone}")
+                        Text("ID del Curso: ${student!!.courseId}")
+                        Text("ID del Estudiante: ${student!!.id}")
                     }
-                } ?: run {
+                } else {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -74,4 +71,3 @@ class StudentDetailActivity : ComponentActivity() {
         }
     }
 }
-

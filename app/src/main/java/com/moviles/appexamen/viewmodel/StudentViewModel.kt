@@ -159,12 +159,22 @@ fun updateStudent(student: Student) {
     //FUNCION PARA DETALLES
    /* fun getStudentById(id: Int): Flow<Student?> {
         return repository.getStudentById(id)
-    }*/
+    }
 
     fun getStudentById(id: Int) {
         viewModelScope.launch {
             val student = repository.getStudentById(id)
 
+        }
+    }*/
+
+    private val _student = MutableStateFlow<Student?>(null)
+    val student: StateFlow<Student?> = _student
+
+    fun getStudentById(id: Int) {
+        viewModelScope.launch {
+            val studentData = repository.getStudentById(id)
+            _student.value = studentData
         }
     }
 
