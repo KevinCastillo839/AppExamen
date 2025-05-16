@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     id ("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -74,7 +75,7 @@ dependencies {
         implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
         implementation ("androidx.compose.ui:ui:1.6.3")
         implementation ("androidx.compose.material3:material3:1.2.0")
-        // demás dependencias...
+
 
     val room_version = "2.7.1"
 
@@ -84,12 +85,14 @@ dependencies {
     // StateFlow
 
 
+    implementation ("androidx.compose.material:material-icons-extended:1.6.1")
 
-    // Para trabajar con LiveData y StateFlow en ViewModel
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0")
 
 
-// Firebase Bill of Materials (BOM) para manejar todas las versiones de Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation("com.google.firebase:firebase-messaging:24.1.1")
+    implementation("com.google.firebase:firebase-analytics:22.4.0")
 
 
 }

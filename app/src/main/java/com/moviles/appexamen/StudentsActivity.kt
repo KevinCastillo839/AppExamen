@@ -1,6 +1,10 @@
 package com.moviles.appexamen
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import com.moviles.appexamen.models.Student
 import com.moviles.appexamen.ui.theme.AppExamenTheme
 import com.moviles.appexamen.viewmodel.CourseViewModel
@@ -30,6 +35,8 @@ class StudentActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        createStudentAddedChannel(this)
+        subscribeToTopic()
         setContent {
             AppExamenTheme {
                 val context = LocalContext.current
@@ -239,4 +246,28 @@ fun StudentForm(
             }
         }
     }
+}
+fun createStudentAddedChannel(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channelId = "student_added_channel"
+        val channelName = "Nuevos Estudiantes en Curso"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            description = "Notifica cuando un estudiante ha sido agregado a un curso"
+        }
+
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
+        notificationManager?.createNotificationChannel(channel)
+    }
+}
+fun subscribeToTopic() {
+    FirebaseMessaging.getInstance().subscribeToTopic("student_notifications")
+        .addOnCompleteListener { task ->
+            var msg = "Subscription successful"
+            if (!task.isSuccessful) {
+                msg = "Subscription failed"
+            }
+            Log.d("FCM", msg)
+        }
 }
