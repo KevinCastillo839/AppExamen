@@ -93,7 +93,7 @@ class CourseViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-   // Agregar esta función
+   // Add this function
     private fun hasInternetConnection(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
@@ -110,7 +110,7 @@ class CourseViewModel(private val context: Context) : ViewModel() {
     fun addCourse(course: Course, file: File?) {
         viewModelScope.launch {
             try {
-                // Preparamos las partes para la petición multipart
+                // We prepare the parts for the multipart request
                 val namePart = course.name.toRequestBody("text/plain".toMediaTypeOrNull())
                 val descriptionPart = course.description.toRequestBody("text/plain".toMediaTypeOrNull())
                 val schedulePart = course.schedule.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -121,7 +121,7 @@ class CourseViewModel(private val context: Context) : ViewModel() {
                     MultipartBody.Part.createFormData("file", it.name, requestFile)
                 }
 
-                // Hacemos la llamada al servicio API
+                // We make the call to the API service
                 val response = RetrofitInstance.api.addCourse(
                     name = namePart,
                     description = descriptionPart,
@@ -130,7 +130,7 @@ class CourseViewModel(private val context: Context) : ViewModel() {
                     file = filePart
                 )
 
-                // Si la respuesta es exitosa, actualizamos la lista de cursos
+                // If the response is successful, we update the list of courses
                 _courses.value = _courses.value.orEmpty() + response
                 Log.i("CourseViewModel", "Response: $response")
             } catch (e: HttpException) {
@@ -150,22 +150,22 @@ class CourseViewModel(private val context: Context) : ViewModel() {
             try {
                 Log.i("CourseViewModel", "Updating course: $course")
 
-                // Convertir los parámetros a RequestBody
+                // Convert the parameters to RequestBody
                 val namePart = course.name.toRequestBody("text/plain".toMediaTypeOrNull())
                 val descriptionPart = course.description.toRequestBody("text/plain".toMediaTypeOrNull())
                 val schedulePart = course.schedule.toRequestBody("text/plain".toMediaTypeOrNull())
                 val professorPart = course.professor.toRequestBody("text/plain".toMediaTypeOrNull())
 
-                // Convertir el archivo a MultipartBody.Part si existe
+                //Convert the file to MultipartBody.Part if it exists
                 val filePart = file?.let {
                     val fileRequestBody = it.asRequestBody("image/*".toMediaTypeOrNull())
                     MultipartBody.Part.createFormData("file", it.name, fileRequestBody)
                 }
 
-                // Asegurarse de que el id no sea nulo
+                // Ensure that the id is not null
                 val courseId = course.id ?: throw IllegalArgumentException("Course id cannot be null")
 
-                // Realizar la solicitud de actualización
+                // Make the update request
                 val response = RetrofitInstance.api.updateCourse(
                     id = courseId, // Usamos un valor no nulo para el id
                     name = namePart,
@@ -175,7 +175,7 @@ class CourseViewModel(private val context: Context) : ViewModel() {
                     file = filePart
                 )
 
-                // Actualizar la lista de cursos con la respuesta obtenida
+                //Update the list of courses with the response obtained
                 _courses.value = _courses.value.map {
                     if (it.id == response.id) response else it
                 }

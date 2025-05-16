@@ -40,7 +40,7 @@ class CourseRepository(private val context: Context) {
 
     private fun Course.toEntity(): CourseEntity {
         return CourseEntity(
-            id = this.id ?: 0, // Usa un valor predeterminado (por ejemplo, 0) si `id` es nulo
+            id = this.id ?: 0, // Use a default value (for example, 0) if id is null
             name = this.name,
             schedule = this.schedule,
             professor = this.professor,

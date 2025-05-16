@@ -1,6 +1,9 @@
 package com.moviles.appexamen
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -65,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     )
 
 
-                    // Estados
+                    // States
                     val courses by courseViewModel.courses.collectAsState()
                     val loadingState by courseViewModel.loadingState.collectAsState()
 
@@ -76,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     val snackbarHostState = remember { SnackbarHostState() }
                     val coroutineScope = rememberCoroutineScope()
 
-                    // Map de estados a mensajes
+                    // Map of states to messages
                     val loadingMessages = mapOf(
                         "Cargando cursos desde la API..." to "Sincronizando datos desde la API...",
                         "Cursos cargados desde la API" to "Datos cargados desde la API.",
@@ -86,7 +89,7 @@ class MainActivity : ComponentActivity() {
 
 
 
-                    // Mostrar Snackbar cuando cambie loadingState
+                    // Show Snackbar when loadingState changes
                     LaunchedEffect(loadingState) {
                         if (loadingState.isNotEmpty() && loadingState != "Verificando conexión...") {
                             coroutineScope.launch {
@@ -99,7 +102,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // Cargar cursos
+                    // Load courses
                     LaunchedEffect(Unit) {
                         courseViewModel.fetchCourses()
                     }
@@ -122,7 +125,7 @@ class MainActivity : ComponentActivity() {
                                 Text("+", color = Color.White)
                             }
                         },
-                        snackbarHost = { SnackbarHost(snackbarHostState) }, // Aquí se conecta el SnackbarHost
+                        snackbarHost = { SnackbarHost(snackbarHostState) }, // This is where the SnackbarHost connects.
                         containerColor = Color(0xFFF5F5F5)
                     ) { paddingValues ->
                         if (showForm) {
@@ -134,12 +137,12 @@ class MainActivity : ComponentActivity() {
                                 CourseForm(
                                     course = selectedCourse,
                                     onSave = { course, file ->
-                                        // Si el curso tiene un id (es un curso existente), entonces actualizarlo
+                                        // If the course has an ID (it is an existing course), then update it.
                                         if (course.id != null) {
-                                            // En este caso, seleccionamos el curso y pasamos su id
-                                            courseViewModel.updateCourse(course, file) // Pasa el curso y el archivo
+                                            // In this case, we select the course and pass its ID.
+                                            courseViewModel.updateCourse(course, file) //Pass the course and the file.
                                         } else {
-                                            // Si no tiene id (es un curso nuevo), entonces agregarlo
+                                            // If it doesn't have an ID (it's a new course), then add it.
                                             courseViewModel.addCourse(course, file)
                                         }
                                         showForm = false
@@ -166,9 +169,18 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onDelete = {
                                             courseViewModel.deleteCourse(course.id)
+                                        },
+                                        onViewStudents = {
+                                            course.id?.let { id ->
+                                                val intent = Intent(context, StudentActivity::class.java).apply {
+                                                    putExtra("COURSE_ID", id) //Pass the course ID to the new activity.
+                                                }
+                                                context.startActivity(intent) //Start the new activity.
+                                            }
                                         }
                                     )
                                 }
+
                             }
                         }
                     }
@@ -193,7 +205,7 @@ fun CourseForm(
 
     val context = LocalContext.current
 
-    // Abre el selector de imágenes
+    // Open the image picker.
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
     }
@@ -265,10 +277,10 @@ fun CourseForm(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón para seleccionar imagen
+        // Button to select image
         Button(
             onClick = {
-                launcher.launch("image/*") // Selecciona solo imágenes
+                launcher.launch("image/*") //Select images only
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
             modifier = Modifier.fillMaxWidth()
@@ -278,7 +290,7 @@ fun CourseForm(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Mostrar la imagen seleccionada
+        // Show the selected image
         imageUri?.let {
             Image(
                 painter = rememberAsyncImagePainter(it),
@@ -297,7 +309,7 @@ fun CourseForm(
         ) {
             Button(
                 onClick = {
-                    // Convertir imageUri a un File si es necesario
+                    // Convert imageUri to a File if necessary
                     val file = imageUri?.let { uri ->
                         getFileFromUri(context, uri)
                     }
@@ -330,7 +342,9 @@ fun CourseForm(
 fun CourseItem(
     course: Course,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onViewStudents: () -> Unit// New parameter to handle the action of viewing students
+
 ) {
     Card(
         modifier = Modifier
@@ -369,25 +383,17 @@ fun CourseItem(
                 ) {
                     Text("Eliminar", color = Color.Black)
                 }
+                Button(
+                    onClick = onViewStudents,// Calls the function that sends the course ID
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
+                ) {
+                    Text("Ver Estudiantes", color = Color.White)
+                }
             }
         }
     }
 }
 
-//@Composable
-//fun EventCard(event: Event, modifier: Modifier = Modifier) {
-//    Card(
-//        modifier = modifier.fillMaxWidth().padding(16.dp),
-//        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-//    ) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            RemoteImage(IMAGES_BASE_URL + event.image)
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Text(event.name, style = MaterialTheme.typography.titleLarge)
-//            Text(text = "📅 ${event.date}", style = MaterialTheme.typography.bodySmall)
-//        }
-//    }
-//}
 
 @Composable
 fun RemoteImage(imageUrl: String) {

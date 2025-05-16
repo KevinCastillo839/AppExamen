@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "475391104882",
+    "project_id": "appexam-45424",
+    "storage_bucket": "appexam-45424.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475391104882:android:903fef1e57b52950e2afeb",
+        "android_client_info": {
+          "package_name": "com.moviles.appexamen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjArIkIBN0US5Qk_YwH0Xt9YpgM-lFerU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
