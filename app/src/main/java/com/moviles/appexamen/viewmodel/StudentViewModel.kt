@@ -102,9 +102,14 @@ class StudentViewModel(private val context: Context) : ViewModel() {
 
 //    Method to add
 fun addStudent(student: Student) {
+    if (student.courseId == null) {
+        Log.e("ViewModelError", "courseId es null, no se puede agregar el estudiante")
+        return
+    }
+
     viewModelScope.launch {
         try {
-            val response = RetrofitInstance.api.addStudent(student.courseId!!, student)
+            val response = RetrofitInstance.api.addStudent(student.courseId, student)
             if (response.isSuccessful) {
                 val createdStudent = response.body()
                 if (createdStudent != null) {
@@ -121,6 +126,7 @@ fun addStudent(student: Student) {
         }
     }
 }
+
 
 // Method to edit
 fun updateStudent(student: Student) {

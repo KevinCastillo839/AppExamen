@@ -103,12 +103,13 @@ class StudentActivity : ComponentActivity() {
                                 }
                                 showForm = false
                             },
-
                             onCancel = {
                                 showForm = false
                             },
+                            courseId = courseId,
                             modifier = Modifier.padding(padding).padding(16.dp)
                         )
+
                     } else {
                         LazyColumn(
                             modifier = Modifier
@@ -193,6 +194,7 @@ fun StudentForm(
     student: Student?,
     onSave: (Student) -> Unit,
     onCancel: () -> Unit,
+    courseId: Int,
     modifier: Modifier = Modifier
 ) {
     var name by remember { mutableStateOf(student?.name ?: "") }
@@ -239,7 +241,7 @@ fun StudentForm(
                         name = name,
                         email = email,
                         phone = phone,
-                        courseId = student?.courseId ?: 12 // This can be adjusted if another courseId is used.
+                        courseId = courseId
                     )
                 )
             }) {
